@@ -53,7 +53,7 @@ exports.bookinstance_create_post = [
     //Validate fields.
     body('book', 'Book must be specified').isLength({ min: 1 }).trim(),
     body('imprint', 'Imprint must be specified').isLength({ min: 1 }).trim(),
-    body('due_back', 'Invalid date').optional({ checkFalst: true }).isISO8601(),
+    body('due_back', 'Invalid date').optional({ checkFalsy: true }).isISO8601(),
 
     //Sanitize fields.
     sanitizeBody('book').trim().escape(),
@@ -97,13 +97,33 @@ exports.bookinstance_create_post = [
 ];
 
 // Display BookInstance delete form on GET.
-exports.bookinstance_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: BookInstance delete GET');
+exports.bookinstance_delete_get = function(req, res, next) {
+
+    BookInstance.findById(req.params.id)
+    .populate('book')
+    .exec(function (err, bookinstance) {
+        if (err) {return next(err); }
+        if (bookinstance==null) { //No results.
+            res.redirect('/catalog/bookinstances');
+        }
+        //Successful, so render.
+        res.render('bookinstance_delete', { title: 'Delete Book Instance', bookinstance: bookinstance});
+    })
+
 };
 
 // Handle BookInstance delete on POST.
 exports.bookinstance_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: BookInstance delete POST');
+
+    BookInstance.findById(req.params.id)
+    .populate('book')
+    .exec(function (err, bookinstance) {
+        if (err) { return next(err); }
+        BookInstance.findByIdAndRemove(req.body.bookinstanceid, function deleteBookinstance(err) {
+            if (err) { return next(err); }
+            res.redirect('/catalog/bookinstances');
+        })
+    });
 };
 
 // Display BookInstance update form on GET.
