@@ -192,7 +192,7 @@ exports.book_delete_post = function(req, res) {
     }, function(err, results) {
         if (err) { return next(err); }
         // Success
-        if (results.book_instances.length > 0) {
+        if (results.book_instances.length > 0 || results.book._id != req.body.bookid) {
             // Book has some instances. Render in the same way as for the GET route.
             res.render('book_delete', { title: 'Delete Book', book: results.book,book_instances: results.book_instances });
             return;

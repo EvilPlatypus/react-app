@@ -118,11 +118,16 @@ exports.bookinstance_delete_post = function(req, res) {
     BookInstance.findById(req.params.id)
     .populate('book')
     .exec(function (err, bookinstance) {
-        if (err) { return next(err); }
-        BookInstance.findByIdAndRemove(req.body.bookinstanceid, function deleteBookinstance(err) {
+        if (bookinstance._id!= req.body.bookinstanceid) {
+            res.render('bookinstance_delete', { title: 'Delete Book Instance', bookinstance: bookinstance});
+        }
+        else {
             if (err) { return next(err); }
-            res.redirect('/catalog/bookinstances');
-        })
+            BookInstance.findByIdAndRemove(req.body.bookinstanceid, function deleteBookinstance(err) {
+                if (err) { return next(err); }
+                res.redirect('/catalog/bookinstances');
+            })
+        }
     });
 };
 

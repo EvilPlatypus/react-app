@@ -134,7 +134,7 @@ exports.genre_delete_post = function(req, res, next) {
     }, function(err, results) {
         if (err) { return next(err); }
         //Success
-        if (results.genre_books.length > 0) {
+        if (results.genre_books.length > 0 || results.genre._id != req.body.genreid) {
             // There are books in this genre. Render in the same way as for GET route.
             res.render('genre_delete', { title: 'Delete Genre', genre: results.genre, genre_books: results.genre_books });
             return;
