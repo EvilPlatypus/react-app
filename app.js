@@ -9,8 +9,12 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var catalog = require('./routes/catalog');  //Import routes for "catalog" area of site
+var compression = require('compression');
+var helmet = require('helmet');
 
 var app = express();
+
+app.use(helmet());
 
 //Set up mongoose connection
 var mongoose = require('mongoose');
@@ -30,6 +34,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(compression()); //Compress all routes (In case of high traffic, better use reverse proxy (like Nginx) than this middleware)
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
