@@ -1,13 +1,13 @@
 node {
   try {
     stage('Checkout') {
-      checkout scm
+      sudo checkout scm
     }
     stage('Environment') {
-      sh 'git --version'
+      sudo sh 'git --version'
       echo "Branch: ${env.BRANCH_NAME}"
       sudo sh 'docker -v'
-      sh 'printenv'
+      sudo sh 'printenv'
     }
     stage('Build Docker test'){
       sudo sh 'docker build -t react-test -f Dockerfile.test --no-cache . '
